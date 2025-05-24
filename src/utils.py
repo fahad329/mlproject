@@ -8,6 +8,7 @@ import pickle
 
 from exception import CustomException
 from sklearn.metrics import r2_score
+from sklearn.model_selection import GridSearchCV
 
 def save_object(file_path,obj):
     try:
@@ -27,6 +28,13 @@ def evaluate_models(X_train, y_train,X_test,y_test,models,param):
 
         for i in range(len(list(models))):
             model = list(models.values())[i]
+            para=param[list(models.keys())[i]]
+            #model.fit(X_train,y_train)
+
+            gs = GridSearchCV(model,param_grid=para,cv=3)
+            gs.fit(X_train,y_train)
+
+            model.set_params(**gs.best_params_)
             model.fit(X_train,y_train)
 
             y_train_pred = model.predict(X_train)
